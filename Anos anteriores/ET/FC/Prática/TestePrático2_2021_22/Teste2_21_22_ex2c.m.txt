@@ -1,0 +1,162 @@
+
+
+clc
+clear all
+close all
+
+dd=linspace(0,0.5,4);
+ndd=length(dd);
+for id=1:ndd-1
+    D=dd(id);
+h=0.1;
+t=0:h:20;
+N=length(t);
+
+x=zeros(N,1);
+vx=zeros(N,1);
+y=zeros(N,1);
+vy=zeros(N,1);
+
+for is=1:150
+     
+    tol=10^-4;
+    guess(1)=40;
+    guess(2)=41;
+    v=guess(is);
+    vx(1)=cosd(10)*v;
+    vy(1)=sind(10)*v;
+    
+   
+    m=0.5;
+    g=9.8;
+
+    y(1)=20;
+    x(1)=0;
+
+    for k=1:N-1
+       
+        vx(k+1)=vx(k) - D/m * vx(k)*h;
+        x(k+1)= x(k) + vx(k)*h;
+
+        vy(k+1)=vy(k) -g*h - D/m * vy(k)*h;
+        y(k+1)= y(k) + vy(k)*h;
+
+       if(y(k+1)<0)
+            y=y(1:k+1);     %CORTAR VETORES PARA INTERP
+            x =x(1:k+1);
+            vy=vy(1:k+1);
+            vx=vx(1:k+1);
+           break;
+        end
+
+    end
+   
+    alcance=interp1(y(end-1:end),x(end-1:end),0,'linear');
+
+        result(is)=alcance; % Condição Fronteira
+        B=50;
+
+ if(is > 1)
+     m=(result(is)-result(is-1))/(guess(is)-guess(is-1));
+     guess(is+1)=guess(is)+ (B-result(is))/m;
+
+     if(abs(B-result(is))<tol)
+         break
+     end
+ end
+end
+
+v_final=guess(end)
+
+figure()
+plot(x,y)
+
+
+end
+
+%%
+
+
+clc
+clear all
+close all
+
+dd=linspace(0,0.5,10);
+ndd=length(dd);
+v0=zeros(ndd);
+
+for id=1:ndd-1
+    D=dd(id);
+h=0.1;
+t=0:h:20;
+N=length(t);
+
+x=zeros(N,1);
+vx=zeros(N,1);
+y=zeros(N,1);
+vy=zeros(N,1);
+
+for is=1:150
+     
+    tol=10^-4;
+    guess(1)=40;
+    guess(2)=41;
+    v=guess(is);
+    vx(1)=cosd(10)*v;
+    vy(1)=sind(10)*v;
+    
+   
+    m=0.5;
+    g=9.8;
+
+    y(1)=20;
+    x(1)=0;
+
+    for k=1:N-1
+       
+        vx(k+1)=vx(k) - D/m * vx(k)*h;
+        x(k+1)= x(k) + vx(k)*h;
+
+        vy(k+1)=vy(k) -g*h - D/m * vy(k)*h;
+        y(k+1)= y(k) + vy(k)*h;
+
+       if(y(k+1)<0)
+            y=y(1:k+1);     %CORTAR VETORES PARA INTERP
+            x =x(1:k+1);
+            vy=vy(1:k+1);
+            vx=vx(1:k+1);
+           break;
+        end
+
+    end
+   
+    alcance=interp1(y(end-1:end),x(end-1:end),0,'linear');
+
+        result(is)=alcance; % Condição Fronteira
+        B=50;
+
+ if(is > 1)
+     m=(result(is)-result(is-1))/(guess(is)-guess(is-1));
+     guess(is+1)=guess(is)+ (B-result(is))/m;
+
+     if(abs(B-result(is))<tol)
+         break
+     end
+ end
+end
+
+
+v_final=guess(end);
+v0(id)=v_final
+
+
+
+end
+v0=v0(1:end-1,1)
+
+plot(dd(2:end),v0)
+
+
+
+
+
